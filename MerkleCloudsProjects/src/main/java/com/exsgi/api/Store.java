@@ -4,6 +4,7 @@
 package com.exsgi.api;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
@@ -55,6 +57,10 @@ public class Store implements Serializable{
 	@OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
 	@JoinColumn(name = "ADDRESS_ID")
 	private Address address;
+	
+	@OneToMany(fetch = FetchType.EAGER,cascade=CascadeType.ALL)
+	@JoinColumn(name="id", referencedColumnName="id", updatable=false)
+	private List<Toy> toys;
 	public long getId() {
 		return id;
 	}

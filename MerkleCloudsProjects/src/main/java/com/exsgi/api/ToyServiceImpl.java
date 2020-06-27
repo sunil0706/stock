@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
  *
  */
 @Service
-public class ToyServiceImpl implements ToyService{
+public final class ToyServiceImpl implements ToyService{
 	private static Logger logger = LoggerFactory.getLogger(ToyServiceImpl.class);
 	
 	@Autowired

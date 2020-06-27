@@ -9,10 +9,10 @@
 		<version>2.3.1.RELEASE</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.exsgi.api</groupId>
-	<artifactId>MerkleCloudsProjects</artifactId>
+	<groupId>com.visel.bookstore</groupId>
+	<artifactId>BookStore</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>MerkleCloudsProjects</name>
+	<name>BookStore</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
@@ -59,15 +59,10 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat.embed</groupId>
-			<artifactId>tomcat-embed-jasper</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
-		</dependency>
+		<!-- <dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
+		</dependency> -->
 	</dependencies>
 
 	<build>
