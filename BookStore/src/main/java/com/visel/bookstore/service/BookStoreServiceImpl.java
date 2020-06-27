@@ -30,7 +30,6 @@ public class BookStoreServiceImpl implements BookStoreService {
 	private BookStoreRepository bookStoreRepository;
 	
 	 /** Create a new Book */
-	
 	@Override
 	public ResponseEntity<Object> saveBook(Book book) {
 		
