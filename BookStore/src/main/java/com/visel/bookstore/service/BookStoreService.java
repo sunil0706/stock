@@ -21,4 +21,8 @@ public interface BookStoreService {
 	public List<Book> findAllBooks();
 	
 	public Optional<Book> findBookById(Long id);
+	
+	public ResponseEntity<Object> updateBookById(Book book, Long id);
+	
+	public ResponseEntity<Object> deleteBook(Long id);
 }

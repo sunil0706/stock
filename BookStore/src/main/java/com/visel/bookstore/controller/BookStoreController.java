@@ -8,13 +8,13 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.visel.bookstore.model.Book;
 import com.visel.bookstore.repository.BookStoreRepository;
-import com.visel.bookstore.service.AuthorServiceImpl;
 import com.visel.bookstore.service.BookStoreServiceImpl;
 
 /**
@@ -70,5 +69,14 @@ public class BookStoreController {
 					return book;
 	}
 	
+	@PutMapping("/book/update/{id}")
+	public ResponseEntity<Object> updateBook(@PathVariable Long id, @RequestBody Book book) {
+		return bookStoreService.updateBookById(book, id);
+	}
 	
+	@DeleteMapping("/book/delete/{id}")
+    public ResponseEntity<Object> deleteBook(@PathVariable Long id) {
+        return bookStoreService.deleteBook(id);
+    }
+
 }
