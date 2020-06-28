@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.visel.bookstore.model.Book;
-import com.visel.bookstore.repository.BookStoreRepository;
 import com.visel.bookstore.service.BookStoreServiceImpl;
 
 /**
@@ -50,9 +49,10 @@ public class BookStoreController {
 	@RequestMapping("/findAllBooks")
 	@ResponseBody
 	public List<Book> findAllBook() {
-		logger.info("Inside findAllBooks method...");
+		logger.info("Inside findAllBook method...");
 		List<Book> books = bookStoreService.findAllBooks();
 		books.forEach(System.out::println);
+		logger.info("Outside findAllBook method...");
 		return books;
 	}
 
