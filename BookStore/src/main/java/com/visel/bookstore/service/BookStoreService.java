@@ -25,4 +25,6 @@ public interface BookStoreService {
 	public ResponseEntity<Object> updateBookById(Book book, Long id);
 	
 	public ResponseEntity<Object> deleteBook(Long id);
+	
+	public List<Book> searchByTitle(String keyword);
 }

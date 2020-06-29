@@ -6,63 +6,58 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import javax.persistence.*;
 import java.util.List;
 
-
-
 @Entity
 @Table
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id")
-public class Author  {
-    
-	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
-	
-    @ManyToMany(targetEntity = Book.class, mappedBy = "authors", cascade = {CascadeType.PERSIST, CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH})
-    private List<Book> books;
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+public class Author {
 
-	/**
-	 * @return the id
-	 */
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	private String name;
+
+	@ManyToMany(targetEntity = Book.class, mappedBy = "authors", cascade = { CascadeType.PERSIST, CascadeType.DETACH,
+			CascadeType.MERGE, CascadeType.REFRESH })
+	private List<Book> books;
+
 	public Long getId() {
 		return id;
 	}
 
-	/**
-	 * @param id the id to set
-	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
 
-	/**
-	 * @return the name
-	 */
 	public String getName() {
 		return name;
 	}
 
-	/**
-	 * @param name the name to set
-	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	/**
-	 * @return the books
-	 */
 	public List<Book> getBooks() {
 		return books;
 	}
 
-	/**
-	 * @param books the books to set
-	 */
 	public void setBooks(List<Book> books) {
 		this.books = books;
 	}
-    
+
+	/**
+	 * @param id
+	 * @param name
+	 * @param books
+	 */
+	public Author(Long id, String name, List<Book> books) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.books = books;
+	}
+
+	public Author() {
+		super();
+	}
+
 }

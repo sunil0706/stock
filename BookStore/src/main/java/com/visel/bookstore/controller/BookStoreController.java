@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -46,7 +47,7 @@ public class BookStoreController {
 	}
 
 	@GetMapping
-	@RequestMapping("/findAllBooks")
+	@RequestMapping("book/findAllBooks")
 	@ResponseBody
 	public List<Book> findAllBook() {
 		logger.info("Inside findAllBook method...");
@@ -57,7 +58,7 @@ public class BookStoreController {
 	}
 
 	@GetMapping
-	@RequestMapping("/findBooksById/{id}")
+	@RequestMapping("/book/findBooksById/{id}")
 	@ResponseBody
 	public Optional<Book> findBookById(@PathVariable Long id) {
 		logger.info("Inside findBookById method...");
@@ -74,5 +75,13 @@ public class BookStoreController {
 	public ResponseEntity<Object> deleteBook(@PathVariable Long id) {
 		return bookStoreService.deleteBook(id);
 	}
-
+	
+	@GetMapping("/book/searchBook")
+	public List<Book> searchBook(@RequestParam String keyword) {
+		logger.info("Inside searchBook controller");
+		List<Book> books = bookStoreService.searchByTitle(keyword);
+		books.forEach(System.out::println);
+		return books;
+	}
+	
 }

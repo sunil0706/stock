@@ -110,4 +110,14 @@ public class BookStoreServiceImpl implements BookStoreService {
 		} else
 			return ResponseEntity.badRequest().body("Cannot find the book specified");
 	}
+	
+	public List<Book> searchByTitle(String keyword) {
+		if(keyword!=null) {
+			bookStoreRepository.searchByTitle(keyword);
+		}
+		return bookStoreRepository.findAll();
+	}
+	
+	
+
 }
