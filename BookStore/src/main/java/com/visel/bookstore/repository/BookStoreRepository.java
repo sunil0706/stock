@@ -19,6 +19,9 @@ import com.visel.bookstore.model.Book;
 @Repository
 public interface BookStoreRepository extends JpaRepository<Book, Long>{
 	
+	@Query("select b from Book b order by id")
+	public List<Book> findAll();
+	
 	public Optional<Book> findByIsbn(Integer id);
 	
 	public List<Book> searchByTitle(String string);

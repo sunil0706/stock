@@ -76,8 +76,8 @@ public class BookStoreController {
 		return bookStoreService.deleteBook(id);
 	}
 	
-	@GetMapping("/book/searchBook")
-	public List<Book> searchBook(@RequestParam String keyword) {
+	@GetMapping("/book/searchBook/{keyword}")
+	public List<Book> searchBook(@PathVariable String keyword) {
 		logger.info("Inside searchBook controller");
 		List<Book> books = bookStoreService.searchByTitle(keyword);
 		books.forEach(System.out::println);
