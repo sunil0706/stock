@@ -9,7 +9,6 @@ import java.util.Optional;
 import org.springframework.http.ResponseEntity;
 
 import com.visel.bookstore.model.Author;
-import com.visel.bookstore.model.Book;
 
 /**
  * @author sunilnayak

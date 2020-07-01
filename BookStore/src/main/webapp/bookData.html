@@ -1,351 +1,386 @@
 <html>
 
 <head>
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
-	<script src="../static/js/bootstrap.min.js?count=1"></script>
+    <script src="../static/js/bootstrap.min.js?count=1"></script>
 
-	<link rel="stylesheet" href="../static/css/bootstrap.min3.3.7.css?count=1">
-	<link rel="stylesheet" type="text/css" href="../static/css/bootstrap-glyphicons.css?count=1">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../static/css/bootstrap.min3.3.7.css?count=1">
+    <link rel="stylesheet" type="text/css" href="../static/css/bootstrap-glyphicons.css?count=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-	<script src="../static/js/bootstrap-tpls.js?count=1"></script>
+    <script src="../static/js/bootstrap-tpls.js?count=1"></script>
 
-	<title>Bookstore</title>
+    <title>Bookstore</title>
+    <style>
+        .main-row {
+            margin: 0;
+        }
 
-	<script type="text/javascript">
-		var app = angular.module("BookManagement", []);
+        .h1-title {
+            padding: 0 1.25rem;
+        }
 
-		//Controller Part
-		app.controller("BookController", function ($scope, $http, $window, $filter) {
+        .add-book {
+            margin-right: 1rem;
+        }
+
+        .myfile {
+            display: inline-block !important;
+        }
+
+        .fa-search {
+            font-size: 20px;
+            padding: 4px;
+        }
+
+        .book-table thead {
+            background: #e7e7e7;
+        }
+    </style>
+    <script type="text/javascript">
+        var app = angular.module("BookManagement", []);
+
+        //Controller Part
+        app.controller("BookController", function ($scope, $http, $window, $filter) {
 
 
-			$scope.bookList = [];
-			$scope.bookData = {};
-			var count = -1;
-			$scope.author = {};
-			$scope.authors = [];
-			$scope.searchData = {};
+            $scope.bookList = [];
+            $scope.bookData = {};
+            var count = -1;
+            $scope.author = {};
+            $scope.authors = [];
+            $scope.searchData = {};
 
-			//Now load the data from server
-			refreshBooksData();
+            //Now load the data from server
+            refreshBooksData();
 
 
-			function refreshBooksData() {
-				$http({
-					method: 'GET',
-					url: 'http://localhost:8090/book/findAllBooks'
-				}).then(function successCallback(response) {
-					$scope.bookList = response.data;
-				}, function errorCallback(response) {
-					console.log(response.statusText);
-					
-				});
-			};
+            function refreshBooksData() {
+                $http({
+                    method: 'GET',
+                    url: 'http://localhost:8090/book/findAllBooks'
+                }).then(function successCallback(response) {
+                    $scope.bookList = response.data;
+                }, function errorCallback(response) {
+                    console.log(response.statusText);
 
-			$scope.prepareAddBook = function () {
-				$scope.bookData = {};
-				$scope.authors = [];
-				var count = -1;
-				$scope.addAuthor();
-				$('#book-model').modal('show');
-				$scope.bookForm.$setPristine();
+                });
+            };
 
-			};
+            $scope.prepareAddBook = function () {
+                $scope.bookData = {};
+                $scope.authors = [];
+                var count = -1;
+                $scope.addAuthor();
+                $('#book-model').modal('show');
+                $scope.bookForm.$setPristine();
 
-			$scope.addAuthor = function () {
-				count++;
-				$scope.author = {
-					arrIndex: count,
-					name: ''
-				};
-				$scope.authors.push($scope.author);
-			};
+            };
 
-			$scope.deleteAuthor = function (index) {
-				count--;
-				$scope.authors.splice(index, 1);
-			};
+            $scope.addAuthor = function () {
+                count++;
+                $scope.author = {
+                    arrIndex: count,
+                    name: ''
+                };
+                $scope.authors.push($scope.author);
+            };
 
-			$scope.addNewBook = function () {
-				$('#book-model').modal('hide');
-				$scope.bookData.authors = $scope.authors;
-				$http.post('http://localhost:8090/book', JSON.stringify($scope.bookData)).then(function (response) {
-					if (response.status = 201) {
-						alert("Data Saved Successfully");
-						refreshBooksData();
-					} else {
-						alert("Something went wrong");
-					}
-				}, function (error) {
-					alert("Something went wrong");
-				});
-			};
+            $scope.deleteAuthor = function (index) {
+                count--;
+                $scope.authors.splice(index, 1);
+            };
 
-			$scope.prepareEditBook = function (bookId) {
-				$scope.bookData = {};
-				angular.forEach($scope.bookList, function (value, key) {
-					if (value.id == bookId) {
-						$scope.bookData = value;
-						$scope.authors = value.authors;
-					}
-				});
-				$('#edit-book-model').modal('show');
-			};
+            $scope.addNewBook = function () {
+                $('#book-model').modal('hide');
+                if (typeof $scope.bookData.isbn === 'string') {
+                    alert("ISBN Must be a number");
+                    return;
+                }
+                $scope.bookData.authors = $scope.authors;
+                $http.post('http://localhost:8090/book', JSON.stringify($scope.bookData)).then(function (response) {
+                    if (response.status = 201) {
+                        alert("Data Saved Successfully");
+                        refreshBooksData();
+                    } else {
+                        alert("Something went wrong");
+                    }
+                }, function (error) {
+                    alert("Something went wrong");
+                });
+            };
 
-			$scope.editBook = function () {
-				$('#book-model').modal('hide');
-				$scope.bookData.authors = $scope.authors;
-				$http.put('http://localhost:8090/book/update', JSON.stringify($scope.bookData)).then(function (response) {
-						alert("Data Updated Successfully");
-						$('#edit-book-model').modal('hide');
-						refreshBooksData();
-				}, function (error) {
-					alert("Something went wrong");
-				});
-			};
+            $scope.prepareEditBook = function (bookId) {
+                $scope.bookData = {};
+                angular.forEach($scope.bookList, function (value, key) {
+                    if (value.id == bookId) {
+                        $scope.bookData = value;
+                        $scope.authors = value.authors;
+                    }
+                });
+                $('#edit-book-model').modal('show');
+            };
 
-			$scope.deleteBook = function (id) {
-				$http.delete('http://localhost:8090/book/delete/' + id).then(function (response) {
+            $scope.editBook = function () {
+                $('#book-model').modal('hide');
+                
+                $scope.bookData.authors = $scope.authors;
+                $http.put('http://localhost:8090/book/update', JSON.stringify($scope.bookData)).then(function (response) {
+                    alert("Data Updated Successfully");
+                    $('#edit-book-model').modal('hide');
+                    refreshBooksData();
+                }, function (error) {
+                    alert("Something went wrong");
+                });
+            };
 
-					refreshBooksData();
+            $scope.deleteBook = function (id) {
+                $http.delete('http://localhost:8090/book/delete/' + id).then(function (response) {
 
-				}, function (error) {
-					refreshBooksData();
-				});
-			};
+                    refreshBooksData();
 
-			$scope.searchBook = function () {
-				$http({
-					method: 'GET',
-					url: 'http://localhost:8090/book/searchBook?keyword=' + $scope.searchData.search
-				}).then(function successCallback(response) {
-					$scope.bookList = response.data;
-				}, function errorCallback(response) {
-					console.log(response.statusText);
-				});
-			};
-			
-			 $scope.uploadFile = function() {
+                }, function (error) {
+                    refreshBooksData();
+                });
+            };
+
+            $scope.searchBook = function () {
+                $http({
+                    method: 'GET',
+                    url: 'http://localhost:8090/book/searchBook?keyword=' + $scope.searchData.search
+                }).then(function successCallback(response) {
+                    $scope.bookList = response.data;
+                }, function errorCallback(response) {
+                    console.log(response.statusText);
+                });
+            };
+
+            $scope.uploadFile = function () {
                 var file = $scope.myFile;
                 var uploadUrl = "/fileUpload";
                 var fd = new FormData();
-                fd.append('File' , File);
+                fd.append('File', File);
                 var request = {
-                        method: 'POST',
-                        url: 'http://localhost:8090/fileUpload',
-                        data: fd,
-                        headers: {
-                            'Content-Type': undefined
-                        }
-                    };
+                    method: 'POST',
+                    url: 'http://localhost:8090/fileUpload',
+                    data: fd,
+                    headers: {
+                        'Content-Type': undefined
+                    }
+                };
 
-                    // SEND THE FILES.
-                    $http(request)
-                        .success(function (d) {
-                            alert(d);
-                        })
-                        .error(function () {
-                        });  
-			 }
-                
-		});
+                // SEND THE FILES.
+                $http(request)
+                    .success(function (d) {
+                        alert(d);
+                    })
+                    .error(function () {
+                    });
+            }
 
-		app.directive('fileModel', ['$parse', function ($parse) {
-             return {
-               restrict: 'A',
-                link: function(scope, element, attrs) {
-                   var model = $parse(attrs.fileModel);
-                   var modelSetter = model.assign;
-                  
-                   element.bind('change', function() {
-                      scope.$apply(function() {
-                         modelSetter(scope, element[0].files[0]);
-                      });
-                   });
+        });
+
+        app.directive('fileModel', ['$parse', function ($parse) {
+            return {
+                restrict: 'A',
+                link: function (scope, element, attrs) {
+                    var model = $parse(attrs.fileModel);
+                    var modelSetter = model.assign;
+
+                    element.bind('change', function () {
+                        scope.$apply(function () {
+                            modelSetter(scope, element[0].files[0]);
+                        });
+                    });
                 }
-             };
-          }]);
-	</script>
+            };
+        }]);
+    </script>
 
 </head>
 
 <body ng-app="BookManagement" ng-controller="BookController">
-	<h1>Book Store</h1>
+    <h1 class="h1-title">Book Store</h1>
+    <section class="content">
+        <div class="row main-row">
+            <div class="col-md-12">
+                <div class="box">
+                    <div class="box-body">
 
-	<section class="content">
-		<div class="row">
-			<div class="col-md-12">
-				<div class="box">
-					<div class="box-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <form class="example" name="searchForm" novalidate ng-submit="searchBook()">
+                                    <!-- <input type="text" placeholder="Search.."  
+                                                    data-ng-model="bookData.title" required name="search"> -->
 
-						<div class="row">
-							<div class="col-md-6">
-								<form class="example" name="searchForm" novalidate ng-submit="searchBook()">
-									<!-- <input type="text" placeholder="Search.."  
-													data-ng-model="bookData.title" required name="search"> -->
-									<input type="text" placeholder="Search.." data-ng-model="searchData.search"
-										name="search">
+                                    <div class="input-group">
+                                        <span class="input-group-btn">
+                                            <input class="form-control" type="text" placeholder="Search.."
+                                                data-ng-model="searchData.search" name="search">
 
-									<button type="submit">
-										<i class="fa fa-search"></i>
-									</button>
-								</form>
+                                        </span>
+                                        <span class="input-group-btn">
+                                            <button type="submit">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </form>
 
-							</div>
-							<div class="col-md-3">
-								<button type="button" class="btn btn-primary" data-ng-click="prepareAddBook()">Add
-									Book</button>
-							</div>
-							<div class="col-md-3 pull-right">
-								<input type="file" file-model="myFile" />
-								<button class="btn btn-primary" ng-click="uploadFile()">upload</button>
-							</div>
-						</div>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                <button type="button" class="btn btn-primary add-book"
+                                    data-ng-click="prepareAddBook()">Add
+                                    Book</button>
+                                <input type="file" class="myfile" file-model="myFile" />
+                                <button class="btn btn-primary" ng-click="uploadFile()">upload</button>
+                            </div>
+                        </div>
 
-						<table class="table table-bordered table-striped">
-							<thead>
-								<tr>
-									<th>Sr No.</th>
-									<th>ISBN</th>
-									<th>Book Name</th>
-									<th>Category</th>
-									<th>Year</th>
-									<th>Price</th>
-									<th>Edit</th>
-									<th>Delete</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr ng-repeat="book in bookList">
-									<td>{{ book.id }}</td>
-									<td>{{ book.isbn }}</td>
-									<td>{{ book.title }}</td>
-									<td>{{ book.category }}</td>
-									<td>{{ book.year }}</td>
-									<td>{{ book.price }}</td>
-									<td><a ng-click="prepareEditBook(book.id)">Edit</a></td>
-									<td><a ng-click="deleteBook(book.id)">Delete</a></td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-	<div id="book-model" class="modal fade bs-example-modal-lg" role="dialog" aria-labelledby="gridSystemModalLabel"
-		aria-hidden="true">
-		<div class="modal-dialog modal-lg" id="modal">
-			<div class="modal-content" style="overflow-y: scroll; max-height: 500px;">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-					<h4 class="modal-title" style="text-align: center;" id="gridSystemModalLabel">
-						<strong>BOOK DETAILS</strong>
-					</h4>
-				</div>
-				<form name="bookForm" novalidate ng-submit="bookForm.$valid && addNewBook()">
-					<div ng-init="addAuthor()"></div>
-					<div class="modal-body">
-						<div class="container-fluid">
-							<div class="box-body">
+                        <table class="table table-bordered table-striped book-table">
+                            <thead>
+                                <tr>
+                                    <th>Sr No.</th>
+                                    <th>ISBN</th>
+                                    <th>Book Name</th>
+                                    <th>Category</th>
+                                    <th>Year</th>
+                                    <th>Price</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="book in bookList">
+                                    <td>{{ book.id }}</td>
+                                    <td>{{ book.isbn }}</td>
+                                    <td>{{ book.title }}</td>
+                                    <td>{{ book.category }}</td>
+                                    <td>{{ book.year }}</td>
+                                    <td>{{ book.price }}</td>
+                                    <td><a ng-click="prepareEditBook(book.id)">Edit</a></td>
+                                    <td><a ng-click="deleteBook(book.id)">Delete</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div id="book-model" class="modal fade bs-example-modal-lg" role="dialog" aria-labelledby="gridSystemModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" id="modal">
+            <div class="modal-content" style="overflow-y: scroll; max-height: 500px;">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" style="text-align: center;" id="gridSystemModalLabel">
+                        <strong>BOOK DETAILS</strong>
+                    </h4>
+                </div>
+                <form name="bookForm" novalidate ng-submit="bookForm.$valid && addNewBook()">
+                    <div ng-init="addAuthor()"></div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="box-body">
 
-								<div class="row">
-									<div class="col-md-6">
-										<div class="form-group">
-											<label class="col-sm-3 control-label">Book Title:</label>
-											<div class="col-sm-9">
-												<input type="text" class="form-control" data-ng-model="bookData.title"
-													required>
-											</div>
-										</div>
-									</div>
-									<div class="col-md-6">
-										<div class="form-group">
-											<label class="col-sm-3 control-label">Category:</label>
-											<div class="col-sm-9">
-												<input type="text" class="form-control"
-													data-ng-model="bookData.category" required>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label">Book Title:</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" data-ng-model="bookData.title"
+                                                    required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label">Category:</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control"
+                                                    data-ng-model="bookData.category" required>
 
-											</div>
-										</div>
-									</div>
-								</div>
-								<br>
-								<div class="row">
-									<div class="col-md-6">
-										<div class="form-group">
-											<label class="col-sm-3 control-label">Year:</label>
-											<div class="col-sm-9">
-												<input type="text" class="form-control" data-ng-model="bookData.year"
-													required>
-											</div>
-										</div>
-									</div>
-									<div class="col-md-6">
-										<div class="form-group">
-											<label class="col-sm-3 control-label">Price:</label>
-											<div class="col-sm-9">
-												<input type="text" class="form-control" data-ng-model="bookData.price"
-													required>
-											</div>
-										</div>
-									</div>
-								</div>
-								<br>
-								<div class="row">
-									<div class="col-md-6">
-										<div class="form-group">
-											<label class="col-sm-3 control-label">ISBN:</label>
-											<div class="col-sm-9">
-												<input type="text" class="form-control" data-ng-model="bookData.isbn"
-													required>
-											</div>
-										</div>
-									</div>
-								</div>
-								<br>
-								<div class="row" data-ng-repeat="x in authors">
-									<br>
-									<div class="col-md-6">
-										<div class="form-group">
-											<label class="col-sm-3 control-label">Author Name:</label>
-											<div class="col-sm-9">
-												<input type="text" class="form-control"
-													data-ng-model="authors[$index].name">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label">Year:</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" data-ng-model="bookData.year"
+                                                    required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label">Price:</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" data-ng-model="bookData.price"
+                                                    required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label">ISBN:</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" data-ng-model="bookData.isbn"
+                                                    required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row" data-ng-repeat="x in authors">
+                                    <br>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label">Author Name:</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control"
+                                                    data-ng-model="authors[$index].name">
 
-											</div>
-										</div>
-									</div>
-									<div class="col-md-1">
-										<button type="button" class="btn btn-danger"
-											data-ng-click="deleteAuthor($index)">Delete</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <button type="button" class="btn btn-danger"
+                                            data-ng-click="deleteAuthor($index)">Delete</button>
 
-									</div>
+                                    </div>
 
-								</div>
-								<br>
-								<div class="row data-row">
-									<button type="button" class="btn" data-ng-click="addAuthor()">Add
-										Author</button>
-								</div>
+                                </div>
+                                <br>
+                                <div class="row data-row">
+                                    <button type="button" class="btn" data-ng-click="addAuthor()">Add
+                                        Author</button>
+                                </div>
 
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-						<button type="submit" class="btn btn-primary">Submit</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
-	<div id="edit-book-model" class="modal fade bs-example-modal-lg" role="dialog"
+    <div id="edit-book-model" class="modal fade bs-example-modal-lg" role="dialog"
 		aria-labelledby="gridSystemModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-lg" id="modal">
 			<div class="modal-content" style="overflow-y: scroll; max-height: 500px;">
@@ -411,8 +446,9 @@
 										<div class="form-group">
 											<label class="col-sm-3 control-label">ISBN:</label>
 											<div class="col-sm-9">
-												<input type="text" class="form-control" data-ng-model="bookData.isbn"
-													required>
+												<input type="text" name="isbn" data-ng-model="bookData.isbn" 
+                                                    pattern="[0-9]" required="required">
+                                                    <span ng-show="editBookForm.isbn.$error.required">please enter your numeric value.</span>
 											</div>
 										</div>
 									</div>
@@ -457,3 +493,4 @@
 </body>
 
 </html>
+<html>

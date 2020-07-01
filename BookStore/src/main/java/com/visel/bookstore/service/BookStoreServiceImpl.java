@@ -6,6 +6,8 @@ package com.visel.bookstore.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Vector;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -15,10 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.visel.bookstore.model.Author;
 import com.visel.bookstore.model.AuthorModel;
 import com.visel.bookstore.model.Book;
 import com.visel.bookstore.model.BookModel;
-import com.visel.bookstore.model.Bookstore;
+import com.visel.bookstore.pojo.Bookstore;
 import com.visel.bookstore.repository.AuthorRepository;
 import com.visel.bookstore.repository.BookStoreRepository;
 
@@ -33,7 +36,7 @@ public class BookStoreServiceImpl implements BookStoreService {
 
 	@Autowired
 	private BookStoreRepository bookStoreRepository;
-	
+
 	@Autowired
 	private AuthorRepository authorRepository;
 
@@ -111,85 +114,121 @@ public class BookStoreServiceImpl implements BookStoreService {
 
 	public ResponseEntity<Object> deleteBook(Long id) {
 		logger.info("Inside deleteBook service...");
-		String authorName = authorRepository.findAuthorNameByID(id);
+		List<String> authorNames = new ArrayList<>();
+		Optional<Book> books = bookStoreRepository.findById(id);
 		
+				
+		
+	 
+		if (!books.isPresent()) {
+			return ResponseEntity.unprocessableEntity().body("No Records found...");
+		}
+		else
+		{
+			authorNames = books.get().getAuthors().stream().map(item -> item.getName()).collect(Collectors.toList());
+			
+		}
 		List<Book> bookList = bookStoreRepository.findAll();
-		for(Book book : bookList) {
-			if(book.getAuthors().get(0).getName().equals(authorName))
-			{
-				return ResponseEntity.unprocessableEntity().body("Failed to Delete the specified Book");
+		int count = authorNames.size();
+
+		for (Book book : bookList) {
+			if (!book.getId().equals(id)) {
+				List<Author> authors = book.getAuthors();
+				for (Author author : authors) {
+					authorNames.remove(author.getName());
+				}
 			}
 		}
-		if (bookStoreRepository.findById(id).isPresent()) {
+		if (authorNames.size()!=count) {
+			return ResponseEntity.unprocessableEntity().body("Failed to Delete the specified Book");
+		} else {
+
 			bookStoreRepository.deleteById(id);
-			if (bookStoreRepository.findById(id).isPresent())
-				return ResponseEntity.unprocessableEntity().body("Failed to Delete the specified Book");
-			else
-				return ResponseEntity.ok().body("Successfully deleted the specified book");
-		} else
-			return ResponseEntity.badRequest().body("Cannot find the book specified");
-	}
-	
-	public List<Book> searchByTitle(String keyword) {
-		if(keyword!=null) {
-			return bookStoreRepository.findBySearchTerm(keyword);
+
+			return ResponseEntity.badRequest().body("Book record deleted successfully!!!");
+
 		}
-		else 
+	}
+
+	public List<Book> searchByTitle(String keyword) {
+		if (keyword != null) {
+			return bookStoreRepository.findBySearchTerm(keyword);
+		} else
 			return bookStoreRepository.findAll();
 	}
-	
+
 	public BookModel getBook(Long id) {
-        if(bookStoreRepository.findById(id).isPresent()) {
-            Book book = bookStoreRepository.findById(id).get();
-            
-            BookModel bookModel = new BookModel();
-            bookModel.setTitle(book.getCategory());
-            bookModel.setIsbn(book.getIsbn());
-            bookModel.setCategory(book.getCategory());
-            bookModel.setYear(book.getYear());
-            bookModel.setPrice(book.getPrice());
-            bookModel.setAuthors(getAuthorList(book));
-            
-            return bookModel;
-            
-        } else 
-        	return null;
-    }
-    public List<BookModel > getBooks() {
-        List<Book> bookList = bookStoreRepository.findAll();
-        if(bookList.size()>0) {
-            List<BookModel> bookModels = new ArrayList<>();
-            for (Book book : bookList) {
-            	
-            	BookModel bookModel = new BookModel();
-            	bookModel.setId(book.getId());
-                bookModel.setTitle(book.getTitle());
-                bookModel.setIsbn(book.getIsbn());
-                bookModel.setCategory(book.getCategory());
-                bookModel.setYear(book.getYear());
-                bookModel.setPrice(book.getPrice());                
-                bookModel.setAuthors(getAuthorList(book));
-                bookModels.add(bookModel);
-            }
-            return bookModels;
-        } else 
-        	return new ArrayList<BookModel>();
-    }
-    
-    private List<AuthorModel> getAuthorList(Book book){
-        List<AuthorModel> authorList = new ArrayList<>();
-        for(int i=0; i< book.getAuthors().size(); i++) {
-        	AuthorModel authorModel = new AuthorModel();
-        	authorModel.setName(book.getAuthors().get(i).getName());
-            authorList.add(authorModel);
-        }
-        return authorList;
-    }
+		if (bookStoreRepository.findById(id).isPresent()) {
+			Book book = bookStoreRepository.findById(id).get();
+
+			BookModel bookModel = new BookModel();
+			bookModel.setTitle(book.getCategory());
+			bookModel.setIsbn(book.getIsbn());
+			bookModel.setCategory(book.getCategory());
+			bookModel.setYear(book.getYear());
+			bookModel.setPrice(book.getPrice());
+			bookModel.setAuthors(getAuthorList(book));
+
+			return bookModel;
+
+		} else
+			return null;
+	}
+
+	public List<BookModel> getBooks() {
+		List<Book> bookList = bookStoreRepository.findAll();
+		if (bookList.size() > 0) {
+			List<BookModel> bookModels = new ArrayList<>();
+			for (Book book : bookList) {
+
+				BookModel bookModel = new BookModel();
+				bookModel.setId(book.getId());
+				bookModel.setTitle(book.getTitle());
+				bookModel.setIsbn(book.getIsbn());
+				bookModel.setCategory(book.getCategory());
+				bookModel.setYear(book.getYear());
+				bookModel.setPrice(book.getPrice());
+				bookModel.setAuthors(getAuthorList(book));
+				bookModels.add(bookModel);
+			}
+			return bookModels;
+		} else
+			return new ArrayList<BookModel>();
+	}
+
+	private List<AuthorModel> getAuthorList(Book book) {
+		List<AuthorModel> authorList = new ArrayList<>();
+		for (int i = 0; i < book.getAuthors().size(); i++) {
+			AuthorModel authorModel = new AuthorModel();
+			authorModel.setName(book.getAuthors().get(i).getName());
+			authorList.add(authorModel);
+		}
+		return authorList;
+	}
 
 	@Override
 	public ResponseEntity<Object> saveXMLObject(Bookstore bookstore) {
-		
-		return null;
+
+		logger.info("Inside saveXMLObject service method...");
+		Book bookEntity = new Book();
+		for (com.visel.bookstore.pojo.Book bookPojo : bookstore.getBook()) {
+			bookEntity.setIsbn(Integer.valueOf(bookPojo.getIsbn()));
+			bookEntity.setTitle(bookPojo.getTitle());
+			bookEntity.setCategory(bookPojo.getCategory());
+			bookEntity.setPrice(Double.valueOf(bookPojo.getPrice()));
+			bookEntity.setYear(Integer.valueOf(bookPojo.getYear()));
+			String[] authorName = bookPojo.getAuthors().getAuthor();
+			List<Author> authors = new ArrayList<Author>();
+			for (String aName : authorName) {
+				Author author = new Author();
+				author.setName(aName);
+				authors.add(author);
+			}
+			bookEntity.setAuthors(authors);
+			bookStoreRepository.save(bookEntity);
+		}
+		logger.info("Outside saveXMLObject service method...");
+		return ResponseEntity.ok("Book Saved Successfully");
+
 	}
-    
 }

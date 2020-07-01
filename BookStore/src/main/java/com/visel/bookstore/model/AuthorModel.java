@@ -3,20 +3,15 @@
  */
 package com.visel.bookstore.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 /**
  * @author sunilnayak
  *
  */
-@JacksonXmlRootElement(localName="authors")
 public class AuthorModel {
 	
 	private int id;
-	@JacksonXmlProperty(localName="name")
-    @JsonProperty("author")
+
 	private String name;
 	
 

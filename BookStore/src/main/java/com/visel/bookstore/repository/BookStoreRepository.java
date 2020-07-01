@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.visel.bookstore.model.Book;
+import com.visel.bookstore.model.BookModel;
 
 /**
  * @author sunilnayak
@@ -28,6 +29,7 @@ public interface BookStoreRepository extends JpaRepository<Book, Long>{
 	@Query("SELECT t FROM Book t WHERE " +
             "LOWER(t.title) LIKE LOWER(CONCAT('%',:searchTerm, '%')) OR " +
             "LOWER(t.category) LIKE LOWER(CONCAT('%',:searchTerm, '%'))")
-    List<Book> findBySearchTerm(@Param("searchTerm") String searchTerm);
+    public List<Book> findBySearchTerm(@Param("searchTerm") String searchTerm);
+		
 	
 }

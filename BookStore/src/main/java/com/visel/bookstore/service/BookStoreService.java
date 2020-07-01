@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 
 import com.visel.bookstore.model.Book;
 import com.visel.bookstore.model.BookModel;
-import com.visel.bookstore.model.Bookstore;
+import com.visel.bookstore.pojo.Bookstore;
 
 /**
  * @author sunilnayak
