@@ -21,7 +21,9 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.visel.bookstore.model.Author;
 import com.visel.bookstore.model.Book;
+import com.visel.bookstore.repository.AuthorRepository;
 import com.visel.bookstore.repository.BookStoreRepository;
+import com.visel.bookstore.service.AuthorServiceImpl;
 import com.visel.bookstore.service.BookStoreServiceImpl;
 
 @RunWith(SpringRunner.class)
@@ -34,11 +36,12 @@ class BookStoreApplicationTests {
 	@MockBean
 	private BookStoreRepository bookRepository;
 	
-	private MockMvc mockMvc;
-	
 	@Autowired
-    private WebApplicationContext wac;
+	private AuthorServiceImpl authorService;
 	
+	@MockBean
+	private AuthorRepository authorRepository;
+		
 	
 	@Test
 	public void findAllBooksTest() {
@@ -69,8 +72,7 @@ class BookStoreApplicationTests {
 		List<Author> list = new ArrayList<>();
 		list.add(author);
 		when(bookService.findBookById(id)).thenReturn(Optional.of(book));
-		Optional<Book> bookTest = bookService.findBookById(1l);
-		//assertFalse(bookTest.isPresent());
+		bookService.findBookById(1l);
 	}
 	
 	@Test
@@ -95,8 +97,71 @@ class BookStoreApplicationTests {
 		List<Author> list = new ArrayList<>();
 		list.add(author);
 		Book book = new Book(4l, 888, "test", "testing", 2020, 22.90, list);
-		//bookRepository.deleteBook(id);
-		verify(bookRepository).deleteById(id);
+		bookRepository.deleteById(id);
+		//verify(bookRepository).deleteById(id);
+	}
+	@Test
+	public void searchBookTest() {
+		Author author = new Author();
+		author.setId(5l);
+		author.setName("Sunil");
+		List<Author> list = new ArrayList<>();
+		list.add(author);
+		Book book = new Book(4l, 888, "web", "Learning XML", 2020, 22.90, list);
+		String category = book.getCategory();
+		bookRepository.findBySearchTerm(category);
+		assertEquals(0, bookService.searchByTitle(category).size());
+	}
+	
+	@Test
+	public void findAllAuthorsTest() {
+		Book book = new Book();
+		book.setId(1l);
+		book.setIsbn(123);
+		book.setCategory("Computer");
+		book.setTitle("Spring Boot");
+		book.setYear(2010);
+		book.setPrice(45.56);
+		List<Book> listBook = new ArrayList<>();
+		listBook.add(book);
+		when(authorRepository.findAll()).thenReturn(Stream
+				.of(new Author(1L, "SUNIL", listBook)).collect(Collectors.toList()));
+		assertEquals(1, authorService.findAllAuthors().size());
+	}
+	
+	@Test
+	public void findAuthorByIdTest() {
+		Author author = new Author();
+		author.setId(3l);
+		author.setName("sunil");
+		
+		when(authorRepository.findById(1L)).thenReturn(Optional.of(author));
+	}
+	
+	@Test
+	public void saveAuthorTest() {
+		Book book = new Book();
+		book.setId(1l);
+		book.setIsbn(123);
+		book.setCategory("Computer");
+		book.setTitle("Computer Engineering");
+		book.setPrice(34.56);
+		List<Book> listBook = new ArrayList<>();
+		listBook.add(book);
+		Author author = new Author(1l, "Sunil Kumar", listBook);
+		when(authorRepository.save(author)).thenReturn(author);
 	}
 
+	@Test
+	public void deleteAuthorByIdTest() {
+		Long id = 4l;
+		Author author = new Author();
+		author.setId(5l);
+		author.setName("Sunil");
+		List<Author> list = new ArrayList<>();
+		list.add(author);
+		Book book = new Book(4l, 888, "test", "testing", 2020, 22.90, list);
+		//bookService.deleteBook(id);
+		//verify(bookRepository, times(1)).delete(book);
+	}
 }

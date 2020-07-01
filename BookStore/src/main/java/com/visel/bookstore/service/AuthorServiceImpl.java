@@ -98,6 +98,7 @@ public class AuthorServiceImpl implements AuthorService {
 		
 		logger.info("Inside deleteAuthor service...");
 		if (authorRepository.findById(id).isPresent()) {
+			
 			if (authorRepository.getOne(id).getBooks().size() == 0) {
 				authorRepository.deleteById(id);
 				if (authorRepository.findById(id).isPresent()) {

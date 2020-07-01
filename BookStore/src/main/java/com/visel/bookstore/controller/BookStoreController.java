@@ -4,11 +4,11 @@
 package com.visel.bookstore.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,11 +18,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.visel.bookstore.model.Book;
+import com.visel.bookstore.model.BookModel;
 import com.visel.bookstore.service.BookStoreServiceImpl;
 
 /**
@@ -47,28 +46,29 @@ public class BookStoreController {
 	}
 
 	@GetMapping
-	@RequestMapping("book/findAllBooks")
+	@RequestMapping("/book/findAllBooks")
 	@ResponseBody
-	public List<Book> findAllBook() {
+	public List<BookModel> findAllBook() {
 		logger.info("Inside findAllBook method...");
-		List<Book> books = bookStoreService.findAllBooks();
+		List<BookModel> books = bookStoreService.getBooks();
 		books.forEach(System.out::println);
 		logger.info("Outside findAllBook method...");
 		return books;
 	}
 
 	@GetMapping
-	@RequestMapping("/book/findBooksById/{id}")
+	@RequestMapping("/book/findBookById/{id}")
 	@ResponseBody
-	public Optional<Book> findBookById(@PathVariable Long id) {
+	public BookModel findBookById(@PathVariable Long id) {
 		logger.info("Inside findBookById method...");
-		Optional<Book> book = bookStoreService.findBookById(id);
+		BookModel book = bookStoreService.getBook(id);//.orElseThrow(()->new BookNotFoundException("Book id "+id+" doesn't exist."));
 		return book;
 	}
 
-	@PutMapping("/book/update/{id}")
-	public ResponseEntity<Object> updateBook(@PathVariable Long id, @RequestBody Book book) {
-		return bookStoreService.updateBookById(book, id);
+	@PutMapping("/book/update")
+	public ResponseEntity<Object> updateBook(@RequestBody Book book) {
+		bookStoreService.updateBookById(book);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@DeleteMapping("/book/delete/{id}")
@@ -76,12 +76,11 @@ public class BookStoreController {
 		return bookStoreService.deleteBook(id);
 	}
 	
-	@GetMapping("/book/searchBook/{keyword}")
-	public List<Book> searchBook(@PathVariable String keyword) {
+	@GetMapping("/book/searchBook")
+	public List<Book> searchBook(@Param("keyword") String keyword) {
 		logger.info("Inside searchBook controller");
 		List<Book> books = bookStoreService.searchByTitle(keyword);
 		books.forEach(System.out::println);
 		return books;
 	}
-	
 }

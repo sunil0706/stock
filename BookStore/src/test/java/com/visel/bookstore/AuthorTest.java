@@ -29,8 +29,8 @@ import com.visel.bookstore.service.AuthorServiceImpl;
  *
  */
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+//@RunWith(SpringRunner.class)
+//@SpringBootTest
 public class AuthorTest {
 	
 	@Autowired
@@ -40,7 +40,7 @@ public class AuthorTest {
 	private AuthorRepository authorRepository;
 	
 	
-	@Test
+	//@Test
 	public void findAllAuthorsTest() {
 		Book book = new Book();
 		book.setId(1l);
@@ -56,7 +56,7 @@ public class AuthorTest {
 		assertEquals(1, authorService.findAllAuthors().size());
 	}
 	
-	@Test
+	//@Test
 	public void findAuthorByIdTest() {
 		Author author = new Author();
 		author.setId(3l);
@@ -65,7 +65,7 @@ public class AuthorTest {
 		when(authorRepository.findById(1L)).thenReturn(Optional.of(author));
 	}
 	
-	@Test
+	//@Test
 	public void saveAuthorTest() {
 		Book book = new Book();
 		book.setId(1l);
@@ -79,7 +79,7 @@ public class AuthorTest {
 		when(authorRepository.save(author)).thenReturn(author);
 	}
 
-	@Test
+	//@Test
 	public void deleteAuthorByIdTest() {
 		Long id = 4l;
 		Author author = new Author();

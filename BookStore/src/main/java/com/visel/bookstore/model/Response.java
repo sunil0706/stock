@@ -3,13 +3,15 @@
  */
 package com.visel.bookstore.model;
 
+import java.util.List;
+
 /**
  * @author sunilnayak
  *
  */
 public class Response {
 	private String message;
-	private boolean status;
+	private List<String> details;
 
 	public String getMessage() {
 		return message;
@@ -19,27 +21,26 @@ public class Response {
 		this.message = message;
 	}
 
-	public boolean isStatus() {
-		return status;
-	}
-
-	public void setStatus(boolean status) {
-		this.status = status;
-	}
-	
 	/**
 	 * @param message
-	 * @param status
+	 * @param details
 	 */
-	public Response(String message, boolean status) {
+	public Response(String message, List<String> details) {
 		super();
 		this.message = message;
-		this.status = status;
+		this.details = details;
+	}
+
+	public List<String> getDetails() {
+		return details;
+	}
+
+	public void setDetails(List<String> details) {
+		this.details = details;
 	}
 
 	public Response() {
 		super();
 	}
 
-	
 }
