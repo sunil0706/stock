@@ -12,12 +12,13 @@
 	<groupId>com.visel.bookstore</groupId>
 	<artifactId>BookStore</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
 	<name>BookStore</name>
 	<description>Demo project for Spring Boot</description>
 
 
 	<properties>
-		<start-class>com.bt.collab.alu.api.webapp.Application</start-class>
+		<start-class>com.visel.bookstore.BookStoreApplication</start-class>
 
 	</properties>
 	<dependencies>
@@ -30,12 +31,7 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
-			<optional>true</optional>
-		</dependency>
+		
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>

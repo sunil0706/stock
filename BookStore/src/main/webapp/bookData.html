@@ -60,7 +60,7 @@
             function refreshBooksData() {
                 $http({
                     method: 'GET',
-                    url: 'http://localhost:8090/book/findAllBooks'
+                    url: 'http://localhost:8092/book/findAllBooks'
                 }).then(function successCallback(response) {
                     $scope.bookList = response.data;
                 }, function errorCallback(response) {
@@ -95,12 +95,8 @@
 
             $scope.addNewBook = function () {
                 $('#book-model').modal('hide');
-                if (typeof $scope.bookData.isbn === 'string') {
-                    alert("ISBN Must be a number");
-                    return;
-                }
                 $scope.bookData.authors = $scope.authors;
-                $http.post('http://localhost:8090/book', JSON.stringify($scope.bookData)).then(function (response) {
+                $http.post('http://localhost:8092/book', JSON.stringify($scope.bookData)).then(function (response) {
                     if (response.status = 201) {
                         alert("Data Saved Successfully");
                         refreshBooksData();
@@ -127,7 +123,7 @@
                 $('#book-model').modal('hide');
                 
                 $scope.bookData.authors = $scope.authors;
-                $http.put('http://localhost:8090/book/update', JSON.stringify($scope.bookData)).then(function (response) {
+                $http.put('http://localhost:8092/book/update', JSON.stringify($scope.bookData)).then(function (response) {
                     alert("Data Updated Successfully");
                     $('#edit-book-model').modal('hide');
                     refreshBooksData();
@@ -137,7 +133,7 @@
             };
 
             $scope.deleteBook = function (id) {
-                $http.delete('http://localhost:8090/book/delete/' + id).then(function (response) {
+                $http.delete('http://localhost:8092/book/delete/' + id).then(function (response) {
 
                     refreshBooksData();
 
@@ -149,7 +145,7 @@
             $scope.searchBook = function () {
                 $http({
                     method: 'GET',
-                    url: 'http://localhost:8090/book/searchBook?keyword=' + $scope.searchData.search
+                    url: 'http://localhost:8092/book/searchBook?keyword=' + $scope.searchData.search
                 }).then(function successCallback(response) {
                     $scope.bookList = response.data;
                 }, function errorCallback(response) {
@@ -164,7 +160,7 @@
                 fd.append('File', File);
                 var request = {
                     method: 'POST',
-                    url: 'http://localhost:8090/fileUpload',
+                    url: 'http://localhost:8092/fileUpload',
                     data: fd,
                     headers: {
                         'Content-Type': undefined
@@ -174,7 +170,6 @@
                 // SEND THE FILES.
                 $http(request)
                     .success(function (d) {
-                        alert(d);
                     })
                     .error(function () {
                     });
@@ -337,8 +332,7 @@
                                             <label class="col-sm-3 control-label">ISBN:</label>
                                             <div class="col-sm-9">
                                                 <input type="text" class="form-control" data-ng-model="bookData.isbn"
-                                                   pattern="[0-9]+" required> 
-                                                   <span class="error" ng-show="editBookForm.isbn.$error.pattern">ISBN value must be a number</span>
+                                                    required> 
                                             </div>
                                         </div>
                                     </div>
