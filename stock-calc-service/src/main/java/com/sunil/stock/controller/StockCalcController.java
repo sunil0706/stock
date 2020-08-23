@@ -23,7 +23,7 @@ public class StockCalcController {
 		if(responseStatus.getStatusCode().value()==200) {
 			totalStockPrice = quantity * stockPrice;
 		System.out.println("Total Stock Price of "+quantity+" unit "+stockName+" is : "+totalStockPrice);
-		return new ResponseEntity<String>("Total Price ::"+totalStockPrice, HttpStatus.OK);
+		return new ResponseEntity<String>("Total Stock Price is ::"+totalStockPrice, HttpStatus.OK);
 		}
 		return new ResponseEntity<String>("Stock Not Found",HttpStatus.BAD_REQUEST);
 	}
