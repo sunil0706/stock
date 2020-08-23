@@ -15,8 +15,8 @@ public class StockCalcController {
 	@Autowired
 	private ProxyStock stock;
 	
-	@GetMapping("/stockprice/{quantity}/{stockName}")
-	public ResponseEntity<String> findStockCalculate(@PathVariable Integer quantity,@PathVariable String stockName) {
+	@GetMapping("/stockprice/{stockName}/{quantity}")
+	public ResponseEntity<String> findStockCalculate(@PathVariable String stockName,@PathVariable Integer quantity) {
 		Double totalStockPrice = null;
 		ResponseEntity<Double> responseStatus = stock.getStockPrice(stockName);
 		Double stockPrice = responseStatus.getBody().doubleValue();
