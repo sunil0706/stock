@@ -11,6 +11,6 @@ import com.sunil.stock.exception.StockPriceNotFoundException;
 @FeignClient(name="stock-price-service")
 public interface ProxyStock {
 
-	@GetMapping("/price/{stockName}")
+	@GetMapping("/stock/price/{stockName}")
 	public ResponseEntity<Double> getStockPrice(@PathVariable("stockName") String stockName) throws StockPriceNotFoundException;
 }
